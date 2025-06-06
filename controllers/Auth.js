@@ -156,6 +156,8 @@ exports.login = async (req, res) => {
 			const options = {
 				expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
 				httpOnly: true,
+				secure: true,            // 🔥 Required for HTTPS on Render
+  				sameSite: "None",        // 🔥 Required for cross-origin cookie from Vercel
 			};
 			res.cookie("token", token, options).status(200).json({
 				success: true,
