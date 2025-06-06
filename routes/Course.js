@@ -38,7 +38,7 @@ const {
   createSubSection,
   updateSubSection,
   deleteSubSection,
-} = require("../controllers/Subsection")
+} = require("../controllers/SubSection")
 
 // Rating Controllers Import
 const {
@@ -51,7 +51,7 @@ const {
 
 const {
   updateCourseProgress
-} = require("../controllers/courseProgress");
+} = require("../controllers/CourseProgress");
  
 //demo
 const { isDemo } = require("../middlewares/demo");
