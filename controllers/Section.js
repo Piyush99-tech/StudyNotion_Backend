@@ -1,63 +1,61 @@
 const Section = require("../models/Section");
 const Course = require("../models/Course");
 // CREATE a new section
-exports.createSection = async (req, res) => {
-	try {
-		// Extract the required properties from the request body
-		const { sectionName, courseId } = req.body;
 
-		// Validate the input
-		if (!sectionName || !courseId) {
-			return res.status(400).json({
-				success: false,
-				message: "Missing required properties",
-			});
-		}
-		
-		const ifcourse= await Course.findById(courseId);
-		if (!ifcourse) {
-			return res.status(404).json({
-                success: false,
-                message: "Course not found",
-            });
+exports.createSection = async (req,res) => {
+    try{
+        //Data Fetch
+        const {sectionName,courseId} = req.body;
+
+        //Validate
+        if(!sectionName || !courseId){
+            return res.status(401).json(
+                {
+                    success:false,
+                    message:"Missing Properties!"
+                }
+            );
         }
 
-		// Create a new section with the given name
-		const newSection = await Section.create({ sectionName, subSection: [] });
+        //Create Section
+        const newSection = await Section.create({sectionName});
 
-		// Add the new section to the course's content array
-		const updatedCourse = await Course.findByIdAndUpdate(
-			courseId,
-			{
-				$push: {
-					courseContent: newSection._id,
-				},
-			},
-			{ new: true }
-		)
-			.populate({
+        //Insert the Section in the Course
+        const updatedCourse = await Course.findByIdAndUpdate(courseId,
+            {
+                $push:{
+                    courseContent: newSection._id,
+                }
+            },
+            {new:true},
+        ).populate({
 				path: "courseContent",
 				populate: {
 					path: "subSection",
 				},
 			})
 			.exec();
-
-		// Return the updated course object in the response
-		res.status(200).json({
-			success: true,
-			message: "Section created successfully",
-			updatedCourse,
-		});
-	} catch (error) {
-		// Handle errors
-		res.status(500).json({
-			success: false,
-			message: "Internal server error",
-			error: error.message,
-		});
-	}
-};
+        
+        //Return the response of the insertion
+        return res.status(200).json(
+            {
+                success:true,
+                message:"A new Section was created!!",
+                updatedCourse,
+            }
+        )
+    }
+    catch(error){
+        console.error(error);
+        return res.status(500).json(
+            {
+                success:false,
+                message:"Some error occured while Creation of Section",
+                error:error.message,
+            }
+        )
+    }
+}
 
 // UPDATE a section
 exports.updateSection = async (req, res) => {
